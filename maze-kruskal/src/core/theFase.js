@@ -3,9 +3,9 @@ import GameMaze from "./game/gameMaze";
 import Character from "./game/character";
 import { GESTURES, gestureDetection} from "./game/gestures";
 
-export default class CharacterControl extends Phaser.Scene {
+export default class TheFase extends Phaser.Scene {
     constructor() {
-        super("CharacterControl");
+        super("TheFase");
     }
     
     init(data) {

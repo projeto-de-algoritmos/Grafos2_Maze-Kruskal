@@ -1,6 +1,6 @@
 import React from 'react';
 import Phaser from 'phaser';
-import CharacterControl from './core/characterControl';
+import TheFase from './core/theFase';
 import MainMenu from './core/MainMenu';
 
 export default class Game extends React.Component {
@@ -22,7 +22,7 @@ export default class Game extends React.Component {
             },
             scene: {
                 MainMenu,
-                CharacterControl,
+                TheFase,
             }
         };
 
