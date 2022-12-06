@@ -8,6 +8,7 @@ export default class Game extends React.Component {
         const dimension = this._getDimensions();
         const config = {
             type: Phaser.AUTO,
+            pixelArt: true,
             width: dimension * 0.8,
             height: dimension * 0.8,
             parent: 'game-parent',
@@ -20,10 +21,10 @@ export default class Game extends React.Component {
             input: {
                 activePointers: 5,
             },
-            scene: {
+            scene: [
                 MainMenu,
                 TheFase,
-            }
+            ],
         };
 
         new Phaser.Game(config);

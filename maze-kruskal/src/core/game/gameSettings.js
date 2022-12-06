@@ -19,6 +19,6 @@ export function initSettings() {
       maxSideLength: 15,
       minSideLength: 10,
       sideLength: 10,
-      gameMode: 1,
+      gameMode: 0,
     };
   }

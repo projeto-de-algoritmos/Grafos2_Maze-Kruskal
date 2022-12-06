@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import {
     initSettings,
     getDimensions,
-    getGamemodeInfo,
 } from "./game/gameSettings";
 import { GESTURES, gestureDetection } from "./game/gestures";
 
@@ -80,7 +79,7 @@ export default class MainMenu extends Phaser.Scene {
         exit.setOrigin(0.5, 0.5);
 
         this.options = [
-            {text: startGame, scene: "CharacterControl"},
+            {text: startGame, scene: "TheFase"},
             {text: exit, scene: "Exit"},
         ];
     }
@@ -110,8 +109,7 @@ export default class MainMenu extends Phaser.Scene {
             this.updateChoice(1);
         }
         if (
-            Phaser.Input.Keyboard.JustDown(this.keys.select) ||
-            Phaser.Input.Keyboard.JustDown(this.keys.enter)
+            Phaser.Input.Keyboard.JustDown(this.keys.select)
         ) {
             this.scene.start(this.options[this.choice].scene, this.settings);
         }

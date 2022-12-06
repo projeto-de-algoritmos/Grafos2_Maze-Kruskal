@@ -18,7 +18,7 @@ export default class TheFase extends Phaser.Scene {
     }
     
     create() {
-        this.cameras.main.setBackgroundColor("#000000");
+        this.cameras.main.setBackgroundColor("#FFFFFF");
         this.keys = this.input.keyboard.addKeys({
             up: 'W',
             down: 'S',
@@ -52,7 +52,7 @@ export default class TheFase extends Phaser.Scene {
 
         this.maze.drawMaze();
 
-        this.maze.fillGrid(this.endPoint, '0x00ff00');
+        this.maze.fillGrid(this.endPoint, '#444444');
         
         this.character.drawCharacter();
     }
@@ -60,16 +60,16 @@ export default class TheFase extends Phaser.Scene {
     handleGesture(detection) {
         switch (detection.gesture) {
             case GESTURES.SWIPE_LEFT:
-                this.character.moveLeft();
+                this.updateMovement(Character.DIRECTIONS.LEFT);
                 break;
             case GESTURES.SWIPE_RIGHT:
-                this.character.moveRight();
+                this.updateMovement(Character.DIRECTIONS.RIGHT);
                 break;
             case GESTURES.SWIPE_UP:
-                this.character.moveUp();
+                this.updateMovement(Character.DIRECTIONS.UP);
                 break;
             case GESTURES.SWIPE_DOWN:
-                this.character.moveDown();
+                this.updateMovement(Character.DIRECTIONS.DOWN);
                 break;
             default:
                 break;
@@ -81,7 +81,13 @@ export default class TheFase extends Phaser.Scene {
 
         if (this.character.position.x === this.endPoint.x 
             && this.character.position.y === this.endPoint.y) {
-            this.scene.start("GameEnd");
+            this.scene.start("GameEnd", {
+                settings: this.settings,
+                results: {
+                    message: 'Finished',
+                    messageColour: '#00ff00',
+                }
+            });
         }
     }
     

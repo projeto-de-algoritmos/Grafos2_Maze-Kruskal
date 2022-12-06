@@ -9,16 +9,20 @@ const DIRECTIONS = {
 const DEFAULT_UPDATE_STEPS = 5;
 
 export default class Character {
-    constructor(maze, initialPosition, options) {
+    constructor(maze, initialPosition, options = {}) {
         this.maze = maze;
         this.position = initialPosition;
         this.prevPos = initialPosition;
-        this.colour = options.colour || 0x0000ff;
+        this.colour = options.colour || "#d0ff00";
         this.smoothMovement = options.smoothMovement || false;
         this.UPDATE_STEPS = options.updateSteps || DEFAULT_UPDATE_STEPS;
         this.updating = false;
         this.updateStep = 0;
     }
+
+    static get DIRECTIONS() {
+        return DIRECTIONS;
+      }
 
     drawCharacter() {
         this.maze.fillGrid(this.position, this.colour);
@@ -94,7 +98,7 @@ export default class Character {
                 x:
                     Math.round(
                         (this.prevPos.x +
-                            (1 / this.UPDATE_STEPS) * this.updateStep * diffX) * 10
+                            (1 / this.UPDATE_STEPS) * this.updateStep * diferenceX) * 10
                     ) / 10
             };
 
@@ -103,7 +107,7 @@ export default class Character {
                 x:
                     Math.round(
                         (this.prevPos.x +
-                            (1 / this.UPDATE_STEPS) * (this.updateStep + 1) * diffX) * 10
+                            (1 / this.UPDATE_STEPS) * (this.updateStep + 1) * diferenceX) * 10
                     ) / 10
             };
 
@@ -115,7 +119,7 @@ export default class Character {
                 y:
                     Math.round(
                         (this.prevPos.y +
-                            (1 / this.UPDATE_STEPS) * this.updateStep * diffY) *
+                            (1 / this.UPDATE_STEPS) * this.updateStep * diferenceY) *
                         10
                     ) / 10
             };
@@ -124,7 +128,7 @@ export default class Character {
                 y:
                     Math.round(
                         (this.prevPos.y +
-                            (1 / this.UPDATE_STEPS) * (this.updateStep + 1) * diffY) *
+                            (1 / this.UPDATE_STEPS) * (this.updateStep + 1) * diferenceY) *
                         10
                     ) / 10
             };
