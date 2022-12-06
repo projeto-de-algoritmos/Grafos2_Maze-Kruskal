@@ -1,22 +1,25 @@
-import Maze from '../../Utils/maze';
+import Maze from '../../Utils/newMaze.js';
 import { getDimensions } from './gameSettings';
 
 export default class GameMaze extends Maze {
-    constructor(game, graphics, size, colour = "#FFFFFF") {
+    constructor(game, graphics, size, colour = "0xFFFFFF") {
         super(size);
-
         this.size = size;
         this.game = game;
         this.graphics = graphics;
         this.graphics.setPosition(1, 1);
         this.gameDimensions = getDimensions(this.game);
-        this.sideLength = (this.gameDimensions.screenLength -2) / size;
+        this.sideLength = parseInt((this.gameDimensions.screenLength -2) / size);
         this.colour = colour;
     }
 
     drawMaze() {
+        return
         this.graphics.fillStyle(this.colour);
-        this.maze.getVertices().forEach(vertex => {
+
+        const vertices = this.getVertices()
+        
+        vertices.forEach(vertex => {
             let position = vertex.split(',');
 
             let vertexX = Number(position[0]);
@@ -28,19 +31,29 @@ export default class GameMaze extends Maze {
             let lengthX = this.sideLength - 2;
             let lengthY = this.sideLength - 2;
 
-            if (this.maze.isEdge([vertex, `${vertexX - 1},${vertexY}`])) {
-                rectX -= 1;
-                lengthX += 1;
-            }
-            if (this.maze.isEdge([vertex, `${vertexX + 1},${vertexY}`])) {
-                lengthX += 1;
-            }
-            if (this.maze.isEdge([vertex, `${vertexX},${vertexY - 1}`])) {
-                rectY -= 1;
-                lengthY += 1;
-            }
-            if (this.maze.isEdge([vertex, `${vertexX},${vertexY + 1}`])) {
-                lengthY += 1;
+            const edges = this.getEdgesFromNode(vertex);
+
+            for (const edg of edges) {
+                if (edg.used) {
+                    continue;
+                }
+                if (edg.to.x == vertexX - 1 && edg.to.y == vertexY) {
+                    rectX -= 1;
+                    lengthX += 1;
+                }
+
+                if (edg.to.x == vertexX + 1 && edg.to.y == vertexY) {
+                    lengthX += 1;
+                }
+
+                if (edg.to.x == vertexX && edg.to.y == vertexY - 1) {
+                    rectY -= 1;
+                    lengthY += 1;
+                }
+
+                if (edg.to.x == vertexX && edg.to.y == vertexY + 1) {
+                    lengthY += 1;
+                }
             }
             this.graphics.fillRect(rectX, rectY, lengthX, lengthY);
         })

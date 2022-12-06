@@ -1,6 +1,6 @@
 import React from 'react';
 import Phaser from 'phaser';
-import TheFase from './core/theFase';
+import TheFase from './core/TheFase';
 import MainMenu from './core/MainMenu';
 
 export default class Game extends React.Component {
@@ -26,7 +26,6 @@ export default class Game extends React.Component {
                 TheFase,
             ],
         };
-
         new Phaser.Game(config);
     }
 

@@ -11,7 +11,7 @@ export default class MainMenu extends Phaser.Scene {
     }
 
     init(data) {
-        this.settings = {...initSettings, ...data};
+        this.settings = {...initSettings(), ...data};
         this.handleGesture = this.handleGesture.bind(this);
     }
 

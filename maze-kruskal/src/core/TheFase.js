@@ -3,6 +3,13 @@ import GameMaze from "./game/gameMaze";
 import Character from "./game/character";
 import { GESTURES, gestureDetection} from "./game/gestures";
 
+const DIRECTIONS = {
+    UP: 0,
+    DOWN: 1,
+    LEFT: 2,
+    RIGHT: 3,
+}
+
 export default class TheFase extends Phaser.Scene {
     constructor() {
         super("TheFase");
@@ -11,6 +18,8 @@ export default class TheFase extends Phaser.Scene {
     init(data) {
         this.settings = data;
         this.handleGesture = this.handleGesture.bind(this);
+        this.actionClock = 0;
+        this.actionCooldown = 100;
     }
     
     preload() {
@@ -18,7 +27,7 @@ export default class TheFase extends Phaser.Scene {
     }
     
     create() {
-        this.cameras.main.setBackgroundColor("#FFFFFF");
+        this.cameras.main.setBackgroundColor("0x000000");
         this.keys = this.input.keyboard.addKeys({
             up: 'W',
             down: 'S',
@@ -52,7 +61,7 @@ export default class TheFase extends Phaser.Scene {
 
         this.maze.drawMaze();
 
-        this.maze.fillGrid(this.endPoint, '#444444');
+        this.maze.fillGrid(this.endPoint, '0xff00000');
         
         this.character.drawCharacter();
     }
@@ -60,16 +69,16 @@ export default class TheFase extends Phaser.Scene {
     handleGesture(detection) {
         switch (detection.gesture) {
             case GESTURES.SWIPE_LEFT:
-                this.updateMovement(Character.DIRECTIONS.LEFT);
+                this.updateMovement(DIRECTIONS.LEFT);
                 break;
             case GESTURES.SWIPE_RIGHT:
-                this.updateMovement(Character.DIRECTIONS.RIGHT);
+                this.updateMovement(DIRECTIONS.RIGHT);
                 break;
             case GESTURES.SWIPE_UP:
-                this.updateMovement(Character.DIRECTIONS.UP);
+                this.updateMovement(DIRECTIONS.UP);
                 break;
             case GESTURES.SWIPE_DOWN:
-                this.updateMovement(Character.DIRECTIONS.DOWN);
+                this.updateMovement(DIRECTIONS.DOWN);
                 break;
             default:
                 break;
@@ -96,14 +105,16 @@ export default class TheFase extends Phaser.Scene {
             this.scene.start('MainMenu', this.settings);
         }
 
-        if (this.keys.up.isDown || this.keys.arrowUp.isDown) {
-            this.updateMovement(Character.DIRECTIONS.UP);
-        } else if (this.keys.down.isDown || this.keys.arrowDown.isDown) {
-            this.updateMovement(Character.DIRECTIONS.DOWN);
-        } else if (this.keys.left.isDown || this.keys.arrowLeft.isDown) {
-            this.updateMovement(Character.DIRECTIONS.LEFT);
-        } else if (this.keys.right.isDown || this.keys.arrowRight.isDown) {
-            this.updateMovement(Character.DIRECTIONS.RIGHT);
+        if (new Date().getTime() - this.actionClock > this.actionCooldown) {
+            if (this.keys.up.isDown || this.keys.arrowUp.isDown) {
+                this.updateMovement(DIRECTIONS.UP);
+            } else if (this.keys.down.isDown || this.keys.arrowDown.isDown) {
+                this.updateMovement(DIRECTIONS.DOWN);
+            } else if (this.keys.left.isDown || this.keys.arrowLeft.isDown) {
+                this.updateMovement(DIRECTIONS.LEFT);
+            } else if (this.keys.right.isDown || this.keys.arrowRight.isDown) {
+                this.updateMovement(DIRECTIONS.RIGHT);
+            }
         }
 
         this.character.update();

@@ -1,11 +1,3 @@
-
-const DIRECTIONS = {
-    UP: 0,
-    DOWN: 1,
-    LEFT: 2,
-    RIGHT: 3
-}
-
 const DEFAULT_UPDATE_STEPS = 5;
 
 export default class Character {
@@ -13,11 +5,17 @@ export default class Character {
         this.maze = maze;
         this.position = initialPosition;
         this.prevPos = initialPosition;
-        this.colour = options.colour || "#d0ff00";
+        this.colour = options.colour || "0xd0ff00";
         this.smoothMovement = options.smoothMovement || false;
         this.UPDATE_STEPS = options.updateSteps || DEFAULT_UPDATE_STEPS;
         this.updating = false;
         this.updateStep = 0;
+        this.DIRECTIONS = {
+            UP: 0,
+            DOWN: 1,
+            LEFT: 2,
+            RIGHT: 3,
+        }
     }
 
     static get DIRECTIONS() {
@@ -37,25 +35,25 @@ export default class Character {
         let newPos = { ...this.position };
 
         switch (direction) {
-            case DIRECTIONS.UP:
+            case this.DIRECTIONS.UP:
                 newPos.y -= 1;
                 if (newPos.y < 0) {
                     newPos.y = 0;
                 }
                 break;
-            case DIRECTIONS.DOWN:
+            case this.DIRECTIONS.DOWN:
                 newPos.y += 1;
                 if (newPos.y > this.maze.size - 1) {
                     newPos.y = this.maze.size - 1;
                 }
                 break;
-            case DIRECTIONS.LEFT:
+            case this.DIRECTIONS.LEFT:
                 newPos.x -= 1;
                 if (newPos.x < 0) {
                     newPos.x = 0;
                 }
                 break;
-            case DIRECTIONS.RIGHT:
+            case this.DIRECTIONS.RIGHT:
                 newPos.x += 1;
                 if (newPos.x > this.maze.size - 1) {
                     newPos.x = this.maze.size - 1;
@@ -72,8 +70,8 @@ export default class Character {
             if (this.smoothMovement) {
                 this.updating = true;
             } else {
-                this.maze.fillGrid(prevPos, this.maze.colour);
-                this.maze.fillGrid(newPos, this.colour);
+                this.maze.fillGrid(this.prevPos, this.maze.colour);
+                this.maze.fillGrid(this.newPos, this.colour);
             }
         }
     }
@@ -89,58 +87,57 @@ export default class Character {
     }
 
     _smoothMovement() {
-        let diferenceX = Math.round(this.position.x - this.prevPos.x);
-        let diferenceY = Math.round(this.position.y - this.prevPos.y);
-
-        if (diferenceX !== 0) {
-            let translateFrom = {
-                ...this.prevPos,
-                x:
-                    Math.round(
-                        (this.prevPos.x +
-                            (1 / this.UPDATE_STEPS) * this.updateStep * diferenceX) * 10
-                    ) / 10
-            };
-
-            let translateTo = {
-                ...this.prevPos,
-                x:
-                    Math.round(
-                        (this.prevPos.x +
-                            (1 / this.UPDATE_STEPS) * (this.updateStep + 1) * diferenceX) * 10
-                    ) / 10
-            };
-
-            this.maze.fillGrid(translateFrom, this.maze.colour);
-            this.maze.fillGrid(translateTo, this.colour);
+        let diffX = Math.round(this.position.x - this.prevPos.x);
+        let diffY = Math.round(this.position.y - this.prevPos.y);
+        if (diffX !== 0) {
+          // Calculating the intermediate steps...
+          let interFrom = {
+            ...this.prevPos,
+            x:
+              Math.round(
+                (this.prevPos.x +
+                  (1 / this.UPDATE_STEPS) * this.updateStep * diffX) *
+                  10
+              ) / 10
+          };
+          let interTo = {
+            ...this.prevPos,
+            x:
+              Math.round(
+                (this.prevPos.x +
+                  (1 / this.UPDATE_STEPS) * (this.updateStep + 1) * diffX) *
+                  10
+              ) / 10
+          };
+          this.maze.fillGrid(interFrom, this.maze.colour);
+          this.maze.fillGrid(interTo, this.colour);
         } else {
-            let translateFrom = {
-                ...this.prevPos,
-                y:
-                    Math.round(
-                        (this.prevPos.y +
-                            (1 / this.UPDATE_STEPS) * this.updateStep * diferenceY) *
-                        10
-                    ) / 10
-            };
-            let translateTo = {
-                ...this.prevPos,
-                y:
-                    Math.round(
-                        (this.prevPos.y +
-                            (1 / this.UPDATE_STEPS) * (this.updateStep + 1) * diferenceY) *
-                        10
-                    ) / 10
-            };
-            this.maze.fillGrid(translateFrom, this.maze.colour);
-            this.maze.fillGrid(translateTo, this.colour);
+          let interFrom = {
+            ...this.prevPos,
+            y:
+              Math.round(
+                (this.prevPos.y +
+                  (1 / this.UPDATE_STEPS) * this.updateStep * diffY) *
+                  10
+              ) / 10
+          };
+          let interTo = {
+            ...this.prevPos,
+            y:
+              Math.round(
+                (this.prevPos.y +
+                  (1 / this.UPDATE_STEPS) * (this.updateStep + 1) * diffY) *
+                  10
+              ) / 10
+          };
+          this.maze.fillGrid(interFrom, this.maze.colour);
+          this.maze.fillGrid(interTo, this.colour);
         }
-
+    
         this.updateStep++;
-
         if (this.updateStep % this.UPDATE_STEPS === 0) {
-            this.updateStep = 0;
-            this.updating = false;
+          this.updateStep = 0;
+          this.updating = false;
         }
-    }
+      }
 }

@@ -58,22 +58,35 @@ class Edge {
   }
 }
 
-class Graph {
+export default class Graph {
   constructor(numNodes) {
     this.numNodes = numNodes;
     this.graph = new Map();
     for (let i = 0; i < numNodes; i++) {
       for (let j = 0; j < numNodes; j++) {
-        this.graph.set(`${i}${j}`, new Set());
+        this.graph.set(`${i},${j}`, new Set());
       }
     }
   
   }
 
+  getUsedEdges() {
+    return Array.from(this.graph.values()).map(adj => Array.from(adj.values())).flat(1).filter(a => !a.used)
+  }
+
+  getEdgesFromNode(key) {
+    return Array.from(this.graph.get(key))
+  }
+
+  getNodes() {
+    return Array.from(this.graph.keys())
+  }
+
   getNode(key) {
+    const [x, y] = key.split(',')
     return {
-      x: parseInt(key.at(0)),
-      y: parseInt(key.at(1))
+      x: parseInt(x),
+      y: parseInt(y)
     };
   }
 
@@ -152,8 +165,8 @@ class Graph {
       const nodeFrom = edge.from;
       const nodeTo = edge.to;
 
-      const strNodeFrom = `${nodeFrom.x}${nodeFrom.y}`;
-      const strNodeTo = `${nodeTo.x}${nodeTo.y}`;
+      const strNodeFrom = `${nodeFrom.x},${nodeFrom.y}`;
+      const strNodeTo = `${nodeTo.x},${nodeTo.y}`;
 
       //console.log('desse: ', strNodeFrom, ' pra esse: ', strNodeTo)
 
@@ -163,45 +176,35 @@ class Graph {
       if (find1 != find2) {
         //console.log('entrei no if')
         edge.used = true;
+        const reverseEdge = Array.from(this.graph.get(strNodeTo)).find(edg => edg.to.x == nodeFrom.x && edg.to.y == nodeFrom.y)
+        reverseEdge.used = true
         unionFind.union(find1, find2);
         count++;
       }
       
     }
-
-    console.log(unionFind.data)
   }
 
   populateEdges() {
     for (const [key, adj] of this.graph.entries()) {
       const node = this.getNode(key)
-      if (node.x < this.numNodes - 1) {
-        //insere embaixo
-        const newEdge = new Edge(this.randomWeigth(), node.x, node.y, node.x + 1, node.y);
-        adj.add(newEdge);
-        const newEdge2 = new Edge(this.randomWeigth(), node.x + 1, node.y, node.x, node.y);
-        const anotherNode = this.graph.get(`${node.x + 1}${node.y}`);
-        anotherNode.add(newEdge2);
-      }
       if (node.y < this.numNodes - 1) {
-        //insere direita
+        //insere embaixo
         const newEdge = new Edge(this.randomWeigth(), node.x, node.y, node.x, node.y + 1);
         adj.add(newEdge);
         const newEdge2 = new Edge(this.randomWeigth(), node.x, node.y + 1, node.x, node.y);
-        const anotherNode = this.graph.get(`${node.x}${node.y + 1}`);
+        const anotherNode = this.graph.get(`${node.x},${node.y + 1}`);
+        anotherNode.add(newEdge2);
+      }
+      if (node.x < this.numNodes - 1) {
+        //insere direita
+        const newEdge = new Edge(this.randomWeigth(), node.x, node.y, node.x + 1, node.y);
+        adj.add(newEdge);
+        const newEdge2 = new Edge(this.randomWeigth(), node.x + 1, node.y, node.x, node.y);
+        const anotherNode = this.graph.get(`${node.x + 1},${node.y}`);
         anotherNode.add(newEdge2);
       }
     }
   }
 }
-
-const a = new Graph(5);
-a.populateEdges();
-console.log(Array.from(a.graph.keys()))
-a.printMaze();
-console.log();
-a.kraskul();
-a.printMaze();
-
-
 
